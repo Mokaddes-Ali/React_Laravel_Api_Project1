@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media (max-width: 768px) {
+  .translate-x-0 {
+    transform: translateX(0);
+  }
+
+  .-translate-x-full {
+    transform: translateX(-100%);
+  }
+}
+
+
