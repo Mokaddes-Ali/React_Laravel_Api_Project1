@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('number')->nullable();
             $table->string('address')->nullable();
-            $table->string('pic')->nullable();
+            $table->string('image')->nullable();
             $table->unsignedBigInteger('creator')->nullable();
             $table->unsignedBigInteger('editor')->nullable();
             $table->string('slug', 50)->nullable();

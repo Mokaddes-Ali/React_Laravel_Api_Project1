@@ -12,7 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AuthenticationController;
-use App\Http\Controllers\admin\TempImageController;
+use App\Http\Controllers\TempImageController;
 
 
 

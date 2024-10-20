@@ -50,7 +50,7 @@ class ClientController extends Controller
             'email' => 'required',
             'number' => 'nullable',
             'address' => 'nullable',
-            'pic' => 'nullable|image|mimes:jpeg,png,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -73,7 +73,7 @@ class ClientController extends Controller
             'email' => $request['email'],
             'number' => $request['number'],
             'address' => $request['address'],
-            'pic' => $image_rename ,
+            'image' => $image_rename ,
         ]);
 
   
@@ -108,7 +108,7 @@ class ClientController extends Controller
             'email' => 'required',
             'number' => 'required',
             'address' => 'required',
-            'pic' => 'nullable|mimes:jpeg,png,gif|max:2048',
+            'image' => 'nullable|mimes:jpeg,png,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -134,7 +134,7 @@ class ClientController extends Controller
             $image->move(public_path('images'), $image_rename);
             }
             else{
-                $image_rename=$oldimg['pic'];
+                $image_rename=$oldimg['image'];
             }
 
             $service = Client::where('id',$id)->update([
@@ -142,7 +142,7 @@ class ClientController extends Controller
             'email' => $request->email,
             'number' => $request->number,
             'address' => $request->address,
-            'pic' => $image_rename,
+            'image' => $image_rename,
         ]);
 
         $client->save();
