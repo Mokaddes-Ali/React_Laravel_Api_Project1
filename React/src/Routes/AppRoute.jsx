@@ -23,6 +23,7 @@ import Layout from "../Layout/Layout ";
 import Login from "../Components/Login";
 import RequireAuth from "../Components/RequireAuth";
 import Show from "../Components/Backend/Client/show";
+import Create from "../Components/Backend/Client/create";
 
 function AppRoute() {
   return (
@@ -32,6 +33,9 @@ function AppRoute() {
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/show" element={<Show />} />
+              <Route path="/create" element={ <Create />} />
+             
+
         
 
               <Route

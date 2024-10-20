@@ -48,9 +48,9 @@ class ClientController extends Controller
         $validator = Validator::make($request->all(),[
             'name' => 'required|max:40',
             'email' => 'required',
-            'number' => 'required',
-            'address' => 'required',
-            'pic' => 'required|image|mimes:jpeg,png,gif|max:2048',
+            'number' => 'nullable',
+            'address' => 'nullable',
+            'pic' => 'nullable|image|mimes:jpeg,png,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -76,7 +76,7 @@ class ClientController extends Controller
             'pic' => $image_rename ,
         ]);
 
-        $client->save();
+  
 
         return response()->json([
             'status' => true,
