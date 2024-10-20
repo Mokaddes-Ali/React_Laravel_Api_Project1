@@ -3,26 +3,62 @@
 namespace App\Http\Controllers;
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 
 class ClientController extends Controller
 {
-    public function index(){
-        return view('admin.client.add');
+
+
+    public function index()
+    {
+
+        $client = Client::orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $client
+        ]);
+
+
     }
 
-    public function show(){
-        $all = Client::all();
-        return view('admin.client.show', compact('all'));
-    }
-    public function create(Request $request){
-            $request->validate([
+
+
+
+    public function show($id)
+    {
+        $client= Client::find($id);
+
+         if ($client === null) {
+             return response()->json([
+                 'status' => false,
+                 'message' => 'Service not found'
+             ]);
+         }
+         return response()->json([
+             'status' => true,
+             'data' =>$client
+         ]);
+     }
+
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
             'name' => 'required|max:40',
             'email' => 'required',
             'number' => 'required',
             'address' => 'required',
             'pic' => 'required|image|mimes:jpeg,png,gif|max:2048',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
 
         $image_rename = '';
         if ($request->hasFile('pic')) {
@@ -32,7 +68,7 @@ class ClientController extends Controller
             $image->move(public_path('images'), $image_rename);
         }
 
-        $insert = Client::insertGetId([
+        $client = Client::insertGetId([
             'name' => $request['name'],
             'email' => $request['email'],
             'number' => $request['number'],
@@ -40,29 +76,47 @@ class ClientController extends Controller
             'pic' => $image_rename ,
         ]);
 
-        if ($insert) {
-            return redirect()-> route('show')->with('success', 'Data inserted successfully');
+        $client->save();
 
-        } else {
-            return back()->with('fail', 'Data insertion failed');
-        }
+        return response()->json([
+            'status' => true,
+            'message' => 'Service added successfully'
+        ]);
     }
+
+
 
     public function edit($id){
-        $record = Client::findOrFail($id);
-        return view('admin.client.edit', compact('record'));
+        // $record = Client::findOrFail($id);
+        // return view('admin.client.edit', compact('record'));
     }
 
-    public function update(Request $request){
+    public function update(Request $request, $id){
+
+        $client= Client::find($id);
+
+        if ($client === null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Service not found'
+            ]);
+        }
+
          //dd($request->all());
-        $id = $request->id;
-         $request->validate([
+         $validator = Validator::make($request->all(),[
             'name' => 'required|max:40',
             'email' => 'required',
             'number' => 'required',
             'address' => 'required',
             'pic' => 'nullable|mimes:jpeg,png,gif|max:2048',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
 
         $oldimg = Client::findOrFail($id);
         $deleteimg=public_path('images/'.$oldimg['pic']);
@@ -83,7 +137,7 @@ class ClientController extends Controller
                 $image_rename=$oldimg['pic'];
             }
 
-        $update = Client::where('id',$id)->update([
+            $service = Client::where('id',$id)->update([
             'name' => $request->name,
             'email' => $request->email,
             'number' => $request->number,
@@ -91,12 +145,16 @@ class ClientController extends Controller
             'pic' => $image_rename,
         ]);
 
-        if ($update) {
-            return back()->with('success', 'Data updated successfully');
-        } else {
-            return back()->with('fail', 'Data update failed');
-        }
+        $client->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Service updated successfully'
+        ]);
+
     }
+
+
     public function destroy($id){
         $id=intval($id);
         $client = Client::find($id);
@@ -106,7 +164,13 @@ class ClientController extends Controller
                 unlink($imagePath);
             }
             $client->delete();
-            return back()->with('success', 'Data deleted successfully');
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Service deleted successfully'
+            ]);
+
         }
+
     }
 }
