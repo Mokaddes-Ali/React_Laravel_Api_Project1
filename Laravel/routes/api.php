@@ -24,7 +24,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('clients/edit/{id}', [ClientController::class, 'edit']);
     Route::post('clients/{id}', [ClientController::class, 'update']);
     Route::delete('clients/delete/{id}', [ClientController::class, 'destroy']);
-
     Route::post('temp-image',[TempImageController::class, 'store']);
 });
 
