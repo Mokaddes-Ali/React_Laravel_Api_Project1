@@ -2,9 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthenticationController;
-
 use App\Http\Controllers\BackupController;
+
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ExpenseController;
@@ -12,6 +11,8 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\admin\TempImageController;
 
 
 
@@ -23,6 +24,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('clients/edit/{id}', [ClientController::class, 'edit']);
     Route::post('clients/{id}', [ClientController::class, 'update']);
     Route::delete('clients/delete/{id}', [ClientController::class, 'destroy']);
+
+    Route::post('temp-image',[TempImageController::class, 'store']);
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
