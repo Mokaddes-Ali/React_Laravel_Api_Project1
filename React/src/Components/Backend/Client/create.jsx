@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import JoditEditor from 'jodit-react';
 
-
 const Create = ({ placeholder }) => { 
   const editor = useRef(null);
   const [content, setContent] = useState('');
-
+  const [isDisable, setIsDisable] = useState(false);
+  const [imageId, setImageId] = useState(null);
 
   const config = useMemo(() => ({
     readonly: false, 
@@ -26,7 +26,7 @@ const Create = ({ placeholder }) => {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const newData = { ...data, content,};
+    const newData = { ...data, content, imageId: imageId };
 
     try {
       const res = await fetch(apiUrl + 'clients/store', {
@@ -43,7 +43,7 @@ const Create = ({ placeholder }) => {
 
       if (result.status === true) {
         toast.success(result.message);
-        navigate('/show');
+        navigate('admin/services');
       } else {
         toast.error(result.message);
       }
@@ -52,6 +52,30 @@ const Create = ({ placeholder }) => {
       console.error(error); // Log the error for debugging
     }
   };
+
+  const handleFile = async (e) => {
+    const formData = new FormData();
+    const file = e.target.files[0];
+    formData.append('image', file);
+
+    //temporary image upload
+    await fetch(apiUrl + 'temp-image', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token()}`
+      },
+      body: formData
+    }).then(response => response.json())
+      .then(result => {
+        if (result.status == false) {
+          toast.error(result.errors.image[0]);
+        } else {
+          setImageId(result.data.id);
+          toast.success(result.message);
+        }
+      })
+    }
 
 
 
@@ -132,7 +156,7 @@ const Create = ({ placeholder }) => {
           <div>
             <label className="block text-sm font-medium leading-6 text-gray-900">Service Image</label>
             <br />
-            <input  type="file" className="" />
+            <input onChange={handleFile}   type="file" className="" />
 
           </div>
 
@@ -155,7 +179,7 @@ const Create = ({ placeholder }) => {
 
           {/* Submit Button */}
           <div>
-            <button type = "submit"
+            <button   disabled={isDisable}
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Submit
