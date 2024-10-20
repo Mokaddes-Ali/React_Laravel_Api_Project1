@@ -22,6 +22,7 @@ import MoreSettings from "../Pages/MoreSettings";
 import Layout from "../Layout/Layout ";
 import Login from "../Components/Login";
 import RequireAuth from "../Components/RequireAuth";
+import Show from "../Components/Backend/Client/show";
 
 function AppRoute() {
   return (
@@ -30,6 +31,7 @@ function AppRoute() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Login />} />
+              <Route path="/show" element={<Show />} />
         
 
               <Route
