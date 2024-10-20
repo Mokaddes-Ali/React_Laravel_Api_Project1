@@ -33,7 +33,7 @@ function AppRoute() {
         
 
               <Route
-                path="/dashboard"
+                path="admin/dashboard"
                 element={
                   <RequireAuth>
                   <Layout>
