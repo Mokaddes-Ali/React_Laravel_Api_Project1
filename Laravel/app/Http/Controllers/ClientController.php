@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 use App\Models\Client;
+use App\Models\TempImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\ImageManager;
+use function Symfony\Component\Clock\now;
+use Intervention\Image\Drivers\Gd\Driver;
 
 
 class ClientController extends Controller
@@ -50,7 +55,6 @@ class ClientController extends Controller
             'email' => 'required',
             'number' => 'nullable',
             'address' => 'nullable',
-            'image' => 'nullable|image|mimes:jpeg,png,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -60,23 +64,58 @@ class ClientController extends Controller
             ]);
         }
 
-        $image_rename = '';
-        if ($request->hasFile('pic')) {
-            $image = $request->file('pic');
-            $ext = $image->getClientOriginalExtension();
-            $image_rename = time() . '_' . rand(100000, 10000000) . '.' . $ext;
-            $image->move(public_path('images'), $image_rename);
-        }
+        // $image_rename = '';
+        // if ($request->hasFile('pic')) {
+        //     $image = $request->file('pic');
+        //     $ext = $image->getClientOriginalExtension();
+        //     $image_rename = time() . '_' . rand(100000, 10000000) . '.' . $ext;
+        //     $image->move(public_path('images'), $image_rename);
+        // }
+
+
 
         $client = Client::insertGetId([
             'name' => $request['name'],
             'email' => $request['email'],
             'number' => $request['number'],
             'address' => $request['address'],
-            'image' => $image_rename ,
         ]);
 
-  
+                //save temp image
+
+                if ($request->imageId > 0) {
+
+                    $tempImage = TempImage::find($request->imageId);
+                    if ($tempImage != null) {
+                        $extArray = explode('.',$tempImage->name);
+                        $ext = last($extArray);
+
+                        $fileName = strtotime('now').$client->id.'.'.$ext;
+
+                         // create new image instance (500 x 600)
+                              $sourcePath = public_path('uploads/temp/'.$tempImage->name);
+
+                               $destPath = public_path('uploads/clients/small/'.$fileName);
+                               $manager = new ImageManager(Driver::class);
+                               $image = $manager->read($sourcePath);
+                               $image -> coverDown(500, 600);
+                               $image -> save($destPath);
+
+                               //large
+
+                               $destPath = public_path('uploads/clients/large/'.$fileName);
+                               $manager = new ImageManager(Driver::class);
+                               $image = $manager->read($sourcePath);
+                               $image -> scaleDown(1200);
+                               $image -> save($destPath);
+
+                               $client->image = $fileName;
+                               $client->save();
+
+
+                               }
+                    }
+
 
         return response()->json([
             'status' => true,

@@ -70,10 +70,10 @@ const Create = ({ placeholder }) => {
       .then(result => {
         if (result.status == false) {
           toast.error(result.errors.image[0]);
-        } else {
-          setImageId(result.data.id);
-          toast.success(result.message);
-        }
+         } //else {
+        //   setImageId(result.data.id);
+        //   toast.success(result.message);
+        // }
       })
     }
 
