@@ -21,6 +21,7 @@ import Reports from "../Pages/Reports";
 import MoreSettings from "../Pages/MoreSettings";
 import Layout from "../Layout/Layout ";
 import Login from "../Components/Login";
+import RequireAuth from "../Components/RequireAuth";
 
 function AppRoute() {
   return (
@@ -29,13 +30,16 @@ function AppRoute() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Login />} />
+        
 
               <Route
                 path="/dashboard"
                 element={
+                  <RequireAuth>
                   <Layout>
                     <Dashboard />
                   </Layout>
+                  </RequireAuth>
                 }
               />
 
